@@ -1,17 +1,54 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import * as actions from './store/actions'
+import initiateStore from './store/store'
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const store = initiateStore()
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const App = () => {
+  const [state, setState] = React.useState()
+
+  const taskList = store.getState()
+
+  React.useEffect(() => {
+    store.subscribe(() => {
+      setState(store.getState())
+    })
+  }, [])
+
+  const completeTask = (taskId) => {
+    store.dispatch(actions.taskCompleted(taskId))
+  }
+
+  const changeTitle = (taskId) => {
+    store.dispatch(actions.titleChanged(taskId))
+  }
+
+  const deleteTask = (taskId) => {
+    store.dispatch(actions.taskDeleted(taskId))
+  }
+
+  return (
+    <>
+      <h1>App</h1>
+      <ul>
+        {taskList.map((task) => {
+          return (
+            <li key={task.id}>
+              <p>{task.title}</p>
+              <p>{`Completed: ${task.completed}`}</p>
+              <button onClick={() => completeTask(task.id)}>Complete</button>
+              <button onClick={() => changeTitle(task.id)}>Change title</button>
+              <button onClick={() => deleteTask(task.id)}>Delete task</button>
+              <hr />
+            </li>
+          )
+        })}
+      </ul>
+    </>
+  )
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
+
+root.render(<App />)
