@@ -1,13 +1,11 @@
-import { legacy_createStore as createStore } from "redux";
-import taskReducer from "./taskReducer";
+import { configureStore } from '@reduxjs/toolkit'
+import taskReducer from './task'
+import { logger } from './middleware/logger'
+import { thunk } from './middleware/thunk'
 
-const initialState = [
-  { id: 1, title: 'Task 1', completed: false },
-  { id: 2, title: 'Task 2', completed: false },
-]
+const store = configureStore({
+  reducer: taskReducer,
+  middleware: [logger, thunk],
+})
 
-const initiateStore = () => {
-  return createStore(taskReducer, initialState)
-}
-
-export default initiateStore
+export default store
