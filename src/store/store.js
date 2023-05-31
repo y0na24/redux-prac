@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import taskReducer from './task'
+import errorReducer from './error'
 import { logger } from './middleware/logger'
-import { thunk } from './middleware/thunk'
 
 const store = configureStore({
-  reducer: taskReducer,
-  middleware: [logger, thunk],
+  reducer: { errors: errorReducer, tasks: taskReducer },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 })
 
 export default store
